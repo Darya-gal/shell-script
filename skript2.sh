@@ -17,7 +17,11 @@ prepare() {
 create_file() {
   size="$1"
   path="$2"
-  mkfile "${size}m" "$path" 2>/dev/null || dd if=/dev/zero of="$path" bs=1m count="$size" status=none
+  if command -v mkfile >/dev/null 2>&1; then
+    mkfile "${size}m" "$path"
+  else
+    dd if=/dev/zero of="$path" bs=1M count="$size" status=none
+  fi
 }
 
 count_archives() { ls -1 "$BACKUP"/*.tar.gz 2>/dev/null | wc -l | awk '{print $1}'; }
